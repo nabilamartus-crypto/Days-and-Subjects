@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Fun: Days and Subjects (Kelas 4 SD)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kid: {
+                            yellow: '#FBBF24',
+                            orange: '#FB923C',
+                            pink: '#F472B6',
+                            purple: '#A78BFA',
+                            blue: '#38BDF8',
+                            green: '#34D399',
+                            teal: '#2DD4BF',
+                            dark: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FEF3C7 0%, #E0F2FE 50%, #F3E8FF 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* 3D Flip Card Animation Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .shake-card {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .bounce-hover {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .bounce-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* Confetti Canvas Overlay */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen p-3 md:p-6 relative">
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Header Bar -->
+    <header class="max-w-5xl mx-auto w-full mb-4 flex justify-between items-center bg-white/90 backdrop-blur-md rounded-2xl p-3.5 md:p-4 shadow-sm border border-white">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-white text-2xl shadow-md transform rotate-3">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="heading-font text-lg md:text-2xl font-bold text-slate-800 leading-tight">English Fun Game</h1>
+                <p class="text-xs md:text-sm text-slate-500 font-bold">Kelas 4 SD • Days and Subjects</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <!-- Audio Toggle Button -->
+            <button onclick="toggleSound()" id="btn-sound-toggle" title="Toggle Suara" class="w-10 h-10 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl flex items-center justify-center transition font-bold">
+                <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+            </button>
+            <!-- Teacher Portal Button -->
+            <button onclick="promptTeacherPin()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm rounded-xl font-bold transition flex items-center gap-2 border border-indigo-200">
+                <i class="fa-solid fa-user-shield text-indigo-600"></i>
+                <span class="hidden sm:inline">Portal Guru</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Interactive Container -->
+    <main class="max-w-5xl mx-auto w-full flex-grow flex flex-col justify-center my-2">
+
+        <!-- SCREEN 1: Identity / Student Registration -->
+        <div id="screen-register" class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-10 shadow-xl border border-white max-w-lg mx-auto w-full text-center">
+            <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner transform -rotate-3">
+                <i class="fa-solid fa-icons"></i>
+            </div>
+            <h2 class="heading-font text-2xl md:text-3xl font-bold text-slate-800 mb-2">Halo Sahabat Cerdas!</h2>
+            <p class="text-slate-600 text-sm mb-6 font-semibold">Isi nama dan kelasmu di bawah ini untuk memulai game belajar yang seru!</p>
+
+            <form id="form-identity" onsubmit="startGame(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">Nama Lengkap Siswa</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="input-student-name" required placeholder="Ketik namamu di sini..." 
+                            class="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-amber-400 focus:outline-none transition font-bold text-slate-800 bg-slate-50">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">Pilih Kelas</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="student_class" value="4A" checked class="peer hidden">
+                            <div class="p-3.5 text-center rounded-2xl border-2 border-slate-200 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 font-extrabold transition hover:border-slate-300 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-chalkboard-user text-lg"></i> Kelas 4A
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="student_class" value="4B" class="peer hidden">
+                            <div class="p-3.5 text-center rounded-2xl border-2 border-slate-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:text-purple-700 font-extrabold transition hover:border-slate-300 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-chalkboard-user text-lg"></i> Kelas 4B
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 hover:opacity-95 text-white font-extrabold text-lg rounded-2xl shadow-lg shadow-orange-200 transition bounce-hover flex items-center justify-center gap-2 mt-6 cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Mulai Game Belajar!
+                </button>
+            </form>
+        </div>
+
+        <!-- SCREEN 2: Part 1 - Flipping Card Matching Game -->
+        <div id="screen-matching" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-4 md:p-8 shadow-xl border border-white">
+            <!-- Header Status -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-4 border-b border-slate-200">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider">Bagian 1 dari 2</span>
+                        <span id="subpart-badge" class="px-3 py-1 bg-sky-100 text-sky-800 font-bold text-xs rounded-full uppercase tracking-wider">1A: DAYS</span>
+                    </div>
+                    <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1" id="matching-title">Sub-bagian 1A: Mencocokkan DAYS (7 Hari)</h2>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 flex items-center gap-2">
+                        <i class="fa-solid fa-star text-amber-500 text-xl"></i>
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase">Skor Part 1</div>
+                            <div class="heading-font text-base md:text-lg font-bold text-amber-600" id="match-part1-score">0 / 40</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instruction Box -->
+            <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3 md:p-4 mb-6 flex items-center justify-between text-xs md:text-sm font-semibold text-sky-900">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                    <span><strong>Cara Main Flip Card:</strong> Klik 1 kartu Bahasa Inggris di atas, lalu klik 1 kartu artinya di bawah untuk mencocokkan!</span>
+                </div>
+            </div>
+
+            <!-- TAB / SUB-PART SWITCHER BAR -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-slate-100 p-1.5 rounded-2xl inline-flex gap-2">
+                    <button id="tab-subpart-a" onclick="switchMatchingSubpart('A')" class="px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 bg-white text-slate-800 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-calendar-days text-amber-500"></i>
+                        <span>1A. DAYS (Hari)</span>
+                    </button>
+                    <button id="tab-subpart-b" onclick="switchMatchingSubpart('B')" class="px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 text-slate-500 hover:text-slate-800 cursor-pointer">
+                        <i class="fa-solid fa-book-open text-purple-500"></i>
+                        <span>1B. SUBJECTS (Pelajaran)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FLIP CARDS CONTAINER (Top & Bottom Layout) -->
+            <div id="flip-game-area" class="space-y-6">
+                <!-- TOP ROW: ENGLISH CARDS -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                            <i class="fa-solid fa-flag-usa text-blue-500"></i> Baris Atas: Kosakata Bahasa Inggris
+                        </span>
+                        <span class="text-xs font-bold text-slate-400" id="top-card-count">7 Kartu</span>
+                    </div>
+                    <div id="top-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                        <!-- Dynamic Top English Cards -->
+                    </div>
+                </div>
+
+                <div class="border-t border-dashed border-slate-200 my-4"></div>
+
+                <!-- BOTTOM ROW: INDONESIAN / MEANING CARDS -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                            <i class="fa-solid fa-language text-emerald-500"></i> Baris Bawah: Arti (Bahasa Indonesia) + Ilustrasi
+                        </span>
+                        <span class="text-xs font-bold text-slate-400" id="bottom-card-count">7 Kartu</span>
+                    </div>
+                    <div id="bottom-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                        <!-- Dynamic Bottom Indonesian Cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Action -->
+            <div class="mt-8 flex justify-between items-center border-t border-slate-200 pt-4">
+                <div class="text-xs font-bold text-slate-500" id="subpart-status-text">
+                    Selesaikan 1A dan 1B untuk membuka Latihan Soal!
+                </div>
+                <button id="btn-next-to-quiz" onclick="proceedToQuiz()" disabled class="px-6 py-3 bg-slate-200 text-slate-400 font-bold text-sm rounded-2xl transition cursor-not-allowed flex items-center gap-2">
+                    <span>Lanjut ke Bagian 2 (Soal PG)</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Part 2 - Multiple Choice Quiz (15 Questions) -->
+        <div id="screen-quiz" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-4 md:p-8 shadow-xl border border-white">
+            <!-- Header Bar -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-4 border-b border-slate-200">
+                <div>
+                    <span class="px-3 py-1 bg-purple-100 text-purple-800 font-bold text-xs rounded-full uppercase tracking-wider">Bagian 2 dari 2</span>
+                    <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Latihan Soal Pilihan Ganda (15 Soal)</h2>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl px-4 py-1.5 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-indigo-600"></i>
+                    <span class="font-bold text-indigo-700 text-sm" id="quiz-question-number">Soal 1 / 15</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden mb-6">
+                <div id="quiz-progress-bar" class="bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 h-full transition-all duration-300" style="width: 6.66%;"></div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5 md:p-6 mb-6">
+                <div class="flex items-start gap-3">
+                    <span class="w-8 h-8 bg-amber-400 text-slate-900 rounded-xl flex items-center justify-center font-extrabold text-sm shrink-0" id="q-num-badge">1</span>
+                    <div class="w-full">
+                        <p class="text-base md:text-lg font-extrabold text-slate-800 leading-snug mb-4" id="question-text">Loading question...</p>
+                        
+                        <!-- Visual Illustrative Box (Schedule Card / Icon) -->
+                        <div id="question-visual-container" class="my-4 hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="quiz-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                <!-- Options populated dynamically -->
+            </div>
+
+            <!-- Feedback / Explanation Banner -->
+            <div id="quiz-feedback-box" class="hidden p-4 rounded-2xl mb-6 text-sm font-semibold border flex items-center gap-3">
+                <i id="feedback-icon" class="text-xl"></i>
+                <div id="feedback-text"></div>
+            </div>
+
+            <!-- Quiz Navigation -->
+            <div class="flex justify-between items-center pt-4 border-t border-slate-200">
+                <button id="btn-prev-question" onclick="navigateQuiz(-1)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm rounded-xl transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-chevron-left"></i> Sebelum
+                </button>
+                <button id="btn-next-question" onclick="navigateQuiz(1)" class="px-6 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer">
+                    <span>Berikutnya</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: Final Results & Compliment Page -->
+        <div id="screen-results" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-10 shadow-xl border border-white text-center max-w-2xl mx-auto w-full">
+            <div class="inline-block p-4 rounded-full bg-amber-100 text-amber-500 text-5xl mb-3 shadow-sm animate-bounce">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            
+            <h2 class="heading-font text-3xl font-bold text-slate-800 mb-1">Hasil Belajar Siswa</h2>
+            <p class="text-sm font-bold text-slate-500 mb-6" id="result-student-info">Siswa: - | Kelas: -</p>
+
+            <!-- Score Display Box -->
+            <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl mb-6 shadow-xl relative overflow-hidden">
+                <div class="text-xs uppercase tracking-widest font-extrabold text-amber-400 mb-1">Total Nilai Kamu</div>
+                <div class="heading-font text-6xl md:text-7xl font-bold text-amber-300 my-2" id="final-score-display">0</div>
+                <div class="text-xs text-slate-300 font-medium">Skala Nilai 0 - 100</div>
+
+                <!-- Breakdown detail -->
+                <div class="mt-5 pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-800/80 p-3 rounded-2xl">
+                        <span class="text-slate-400 block mb-0.5">Bagian 1 (Matching)</span>
+                        <span class="font-extrabold text-emerald-400 text-sm" id="score-breakdown-p1">0 / 40</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-2xl">
+                        <span class="text-slate-400 block mb-0.5">Bagian 2 (Soal PG)</span>
+                        <span class="font-extrabold text-sky-400 text-sm" id="score-breakdown-p2">0 / 60</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compliment Message Container (Strict Mandatory Exact Phrasing) -->
+            <div id="compliment-box" class="p-5 rounded-2xl mb-6 border-2 text-left space-y-1">
+                <div class="flex items-center gap-2 font-extrabold text-lg" id="compliment-english">
+                    <!-- Dynamic English Compliment -->
+                </div>
+                <div class="text-sm font-bold text-slate-600 pl-7" id="compliment-indonesian">
+                    <!-- Dynamic Indonesian Translation -->
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-3">
+                <a id="btn-wa-confirm" target="_blank" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base rounded-2xl shadow-lg shadow-emerald-200 transition bounce-hover flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Kirim Hasil ke WhatsApp Guru (085357959694)</span>
+                </a>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="restartGame()" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Coba Lagi</span>
+                    </button>
+                    <button onclick="promptTeacherPin()" class="py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Portal Guru</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TEACHER PIN SECURITY MODAL -->
+    <div id="modal-pin" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-white text-center">
+            <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="heading-font text-xl font-bold text-slate-800 mb-1">Akses Portal Guru</h3>
+            <p class="text-xs text-slate-500 font-semibold mb-4">Masukkan PIN Guru untuk membuka rekapitulasi data (PIN default: <strong>1234</strong> atau <strong>guru123</strong>):</p>
+            
+            <form onsubmit="verifyTeacherPin(event)" class="space-y-3">
+                <input type="password" id="input-teacher-pin" required placeholder="Ketik PIN..." 
+                    class="w-full text-center tracking-widest py-3 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none font-bold text-lg bg-slate-50">
+                <p id="pin-error-text" class="text-xs text-rose-500 font-bold hidden">PIN Salah! Silakan coba lagi.</p>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button type="button" onclick="closePinModal()" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl">Batal</button>
+                    <button type="submit" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl">Buka Portal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TEACHER ASSESSMENT PORTAL MODAL -->
+    <div id="modal-teacher" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-white">
+            <!-- Modal Header -->
+            <div class="p-5 bg-indigo-900 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center text-amber-400 text-xl">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-lg font-bold">Portal Asesmen Guru</h3>
+                        <p class="text-xs text-indigo-200">Rekapitulasi Nilai Bahasa Inggris Kelas 4 SD</p>
+                    </div>
+                </div>
+                <button onclick="closeTeacherModal()" class="w-9 h-9 rounded-full bg-indigo-800 hover:bg-indigo-700 text-indigo-200 flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="p-5 overflow-y-auto flex-grow space-y-4">
+                <!-- Statistics Overview Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-purple-50 p-3.5 rounded-2xl border border-purple-100">
+                        <div class="text-[10px] text-purple-600 font-bold uppercase">Total Siswa</div>
+                        <div class="heading-font text-2xl font-bold text-purple-900" id="stat-total-students">0</div>
+                    </div>
+                    <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-100">
+                        <div class="text-[10px] text-blue-600 font-bold uppercase">Rata-Rata Kelas 4A</div>
+                        <div class="heading-font text-2xl font-bold text-blue-900" id="stat-avg-4a">0</div>
+                    </div>
+                    <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-100">
+                        <div class="text-[10px] text-emerald-600 font-bold uppercase">Rata-Rata Kelas 4B</div>
+                        <div class="heading-font text-2xl font-bold text-emerald-900" id="stat-avg-4b">0</div>
+                    </div>
+                    <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-100">
+                        <div class="text-[10px] text-amber-600 font-bold uppercase">Rata-Rata Total</div>
+                        <div class="heading-font text-2xl font-bold text-amber-900" id="stat-avg-total">0</div>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <div class="relative flex-grow md:flex-grow-0">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="teacher-search-input" onkeyup="renderTeacherRecords()" placeholder="Cari nama siswa..." 
+                                class="pl-8 pr-3 py-1.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-700 w-full focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <select id="teacher-filter-class" onchange="renderTeacherRecords()" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
+                            <option value="ALL">Semua Kelas</option>
+                            <option value="4A">Kelas 4A</option>
+                            <option value="4B">Kelas 4B</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportToCSV()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-file-excel"></i> Ekspor CSV
+                        </button>
+                        <button onclick="clearAllDataPrompt()" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> Hapus Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Assessment Records Table -->
+                <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 font-extrabold border-b border-slate-200">
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">Kelas</th>
+                                    <th class="p-3 text-center">Part 1 (Matching)</th>
+                                    <th class="p-3 text-center">Part 2 (PG)</th>
+                                    <th class="p-3 text-center">Total Skor</th>
+                                    <th class="p-3">Status Compliment</th>
+                                    <th class="p-3">Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacher-table-body" class="divide-y divide-slate-100 font-semibold text-slate-700">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="max-w-5xl mx-auto w-full mt-6 text-center text-xs text-slate-500 font-bold">
+        <p>© Bahasa Inggris Kelas 4 SD • Interactive Days & Subjects Learning Game</p>
+    </footer>
+
+    <script>
+        /* WEB AUDIO API SOUND SYSTEM */
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                playSound('correct');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(160, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'fanfare') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteOsc = audioCtx.createOscillator();
+                        const noteGain = audioCtx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(audioCtx.destination);
+                        noteOsc.type = 'triangle';
+                        noteOsc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                        noteGain.gain.setValueAtTime(0.2, now + idx * 0.12);
+                        noteGain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.3);
+                        noteOsc.start(now + idx * 0.12);
+                        noteOsc.stop(now + idx * 0.12 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio error", e);
+            }
+        }
+
+        /* APPLICATION STATE */
+        let studentData = {
+            name: '',
+            class: '4A',
+            part1Score: 0,
+            part2Score: 0,
+            totalScore: 0,
+            date: ''
+        };
+
+        /* PART 1 DATASETS */
+        // 1A. DAYS (7 Days)
+        const daysDataset = [
+            { id: 'd1', en: "Sunday", idn: "Minggu", icon: "fa-sun", color: "text-rose-500" },
+            { id: 'd2', en: "Monday", idn: "Senin", icon: "fa-calendar-day", color: "text-amber-500" },
+            { id: 'd3', en: "Tuesday", idn: "Selasa", icon: "fa-calendar-week", color: "text-emerald-500" },
+            { id: 'd4', en: "Wednesday", idn: "Rabu", icon: "fa-calendar", color: "text-sky-500" },
+            { id: 'd5', en: "Thursday", idn: "Kamis", icon: "fa-calendar-days", color: "text-indigo-500" },
+            { id: 'd6', en: "Friday", idn: "Jumat", icon: "fa-calendar-check", color: "text-purple-500" },
+            { id: 'd7', en: "Saturday", idn: "Sabtu", icon: "fa-star", color: "text-pink-500" }
+        ];
+
+        // 1B. SUBJECTS (9 Subjects)
+        const subjectsDataset = [
+            { id: 's1', en: "math", idn: "Matematika", icon: "fa-calculator", color: "text-indigo-500" },
+            { id: 's2', en: "religion", idn: "Agama", icon: "fa-hands-praying", color: "text-purple-500" },
+            { id: 's3', en: "science", idn: "IPA (Sains)", icon: "fa-flask", color: "text-teal-500" },
+            { id: 's4', en: "social studies", idn: "IPS", icon: "fa-earth-americas", color: "text-amber-600" },
+            { id: 's5', en: "english", idn: "Bahasa Inggris", icon: "fa-language", color: "text-sky-500" },
+            { id: 's6', en: "indonesian", idn: "Bahasa Indonesia", icon: "fa-book-bookmark", color: "text-rose-500" },
+            { id: 's7', en: "arts", idn: "Seni Budaya", icon: "fa-palette", color: "text-pink-500" },
+            { id: 's8', en: "civics", idn: "PPKn / Civics", icon: "fa-landmark", color: "text-blue-600" },
+            { id: 's9', en: "physical education", idn: "PJOK (Olahraga)", icon: "fa-volleyball", color: "text-orange-500" }
+        ];
+
+        let currentMatchingSubpart = 'A'; // 'A' or 'B'
+        let selectedTopCard = null;    // { id, el }
+        let selectedBottomCard = null; // { id, el }
+        let matchedDaysIds = [];
+        let matchedSubjectsIds = [];
+
+        /* PART 2 QUIZ DATASET (15 MULTIPLE CHOICE QUESTIONS REVISED) */
+        const quizQuestions = [
+            {
+                num: 1,
+                question: "Today is Monday, tomorrow will be....",
+                options: ["Sunday", "Tuesday", "Wednesday", "Thursday"],
+                answer: 1,
+                explanation: "Hari setelah Senin (Monday) adalah Selasa (Tuesday).",
+                visual: "calendar",
+                day: "Monday"
+            },
+            {
+                num: 2,
+                question: "Yesterday was Friday, tomorrow will be....",
+                options: ["Saturday", "Sunday", "Monday", "Thursday"],
+                answer: 1,
+                explanation: "Jika kemarin Jumat (Friday), maka hari ini Sabtu (Saturday), dan besok adalah Minggu (Sunday).",
+                visual: "calendar",
+                day: "Friday (Kemarin)"
+            },
+            {
+                num: 3,
+                question: "Look at Kevin's Schedule. On Monday Kevin has....",
+                options: ["Math, Civics, Indonesian", "Religion, English, P.E.", "Science, Arts, Math", "Social Studies, Civics, English"],
+                answer: 1,
+                explanation: "Pada jadwal hari Senin (Monday), pelajaran Kevin adalah Religion, English, P.E.",
+                visual: "kevin_schedule"
+            },
+            {
+                num: 4,
+                question: "Look at Kevin's Schedule. On Sunday Kevin learns....",
+                options: ["Religion, English, P.E.", "Science, Arts, English", "Math, Civics, Indonesian", "P.E., Religion, Arts"],
+                answer: 2,
+                explanation: "Pada jadwal hari Minggu (Sunday), pelajaran Kevin adalah Math, Civics, Indonesian.",
+                visual: "kevin_schedule"
+            },
+            {
+                num: 5,
+                question: "What day comes after Wednesday?",
+                options: ["Tuesday", "Thursday", "Friday", "Saturday"],
+                answer: 1,
+                explanation: "Hari setelah Rabu (Wednesday) adalah Kamis (Thursday).",
+                visual: "calendar",
+                day: "Wednesday"
+            },
+            {
+                num: 6,
+                question: "What day comes before Friday?",
+                options: ["Wednesday", "Thursday", "Saturday", "Sunday"],
+                answer: 1,
+                explanation: "Hari sebelum Jumat (Friday) adalah Kamis (Thursday).",
+                visual: "calendar",
+                day: "Friday"
+            },
+            {
+                num: 7,
+                question: "How many days are there in a week?",
+                options: ["5 days", "6 days", "7 days", "8 days"],
+                answer: 2,
+                explanation: "Ada 7 hari (7 days) dalam satu minggu.",
+                visual: "calendar_week"
+            },
+            {
+                num: 8,
+                question: "Sunday, Monday, Tuesday, ____, Thursday. What is the missing day?",
+                options: ["Wednesday", "Friday", "Saturday", "Tuesday"],
+                answer: 0,
+                explanation: "Urutan hari yang hilang setelah Selasa (Tuesday) adalah Rabu (Wednesday).",
+                visual: "calendar_week"
+            },
+            {
+                // REVISED QUESTION 9
+                num: 9,
+                question: "Today is Saturday, yesterday was....",
+                options: ["Thursday", "Friday", "Sunday", "Monday"],
+                answer: 1,
+                explanation: "Jika hari ini Sabtu (Saturday), maka kemarin (yesterday) adalah Jumat (Friday).",
+                visual: "calendar",
+                day: "Saturday (Hari ini)"
+            },
+            {
+                // REVISED QUESTION 10
+                num: 10,
+                question: "Which day comes right after Friday?",
+                options: ["Thursday", "Saturday", "Sunday", "Monday"],
+                answer: 1,
+                explanation: "Hari yang datang tepat setelah Jumat (Friday) adalah Sabtu (Saturday).",
+                visual: "calendar",
+                day: "Friday"
+            },
+            {
+                num: 11,
+                question: "If today is Tuesday, tomorrow will be....",
+                options: ["Monday", "Wednesday", "Thursday", "Friday"],
+                answer: 1,
+                explanation: "Jika hari ini Selasa (Tuesday), besok (tomorrow) adalah Rabu (Wednesday).",
+                visual: "calendar",
+                day: "Tuesday"
+            },
+            {
+                num: 12,
+                question: "On Sunday and Saturday, students do not go to school. 'Sunday' means....",
+                options: ["Sabtu", "Minggu", "Senin", "Selasa"],
+                answer: 1,
+                explanation: "'Sunday' dalam Bahasa Indonesia berarti hari Minggu.",
+                visual: "calendar",
+                day: "Sunday"
+            },
+            {
+                num: 13,
+                question: "'P.E.' stands for....",
+                options: ["Public Education", "Physical Education", "Primary English", "Personal Exercise"],
+                answer: 1,
+                explanation: "P.E. adalah kepanjangan dari Physical Education (Pendidikan Jasmani).",
+                visual: "icon",
+                iconClass: "fa-volleyball text-orange-500"
+            },
+            {
+                num: 14,
+                question: "Bahasa Indonesia for 'Social Studies' is....",
+                options: ["Ilmu Pengetahuan Alam", "Ilmu Pengetahuan Sosial", "Pendidikan Pancasila", "Seni Budaya"],
+                answer: 1,
+                explanation: "Social Studies dalam Bahasa Indonesia adalah Ilmu Pengetahuan Sosial (IPS).",
+                visual: "icon",
+                iconClass: "fa-earth-americas text-amber-600"
+            },
+            {
+                // REVISED QUESTION 15
+                num: 15,
+                question: "Look at Kevin's Schedule. How many subjects does Kevin have on Monday?",
+                options: ["2 subjects", "3 subjects", "4 subjects", "5 subjects"],
+                answer: 1,
+                explanation: "Pada hari Senin (Monday), Kevin memiliki 3 pelajaran (Religion, English, P.E.).",
+                visual: "kevin_schedule"
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let userQuizAnswers = new Array(quizQuestions.length).fill(null);
+
+        function startGame(e) {
+            e.preventDefault();
+            initAudio();
+            const nameInput = document.getElementById('input-student-name').value.trim();
+            const classInput = document.querySelector('input[name="student_class"]:checked').value;
+
+            if (!nameInput) return;
+
+            studentData.name = nameInput;
+            studentData.class = classInput;
+            studentData.date = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+
+            document.getElementById('screen-register').classList.add('hidden');
+            document.getElementById('screen-matching').classList.remove('hidden');
+
+            // Reset matching game state
+            matchedDaysIds = [];
+            matchedSubjectsIds = [];
+            switchMatchingSubpart('A');
+            updateMatchingScoreUI();
+        }
+
+        function switchMatchingSubpart(sub) {
+            currentMatchingSubpart = sub;
+            selectedTopCard = null;
+            selectedBottomCard = null;
+
+            const tabA = document.getElementById('tab-subpart-a');
+            const tabB = document.getElementById('tab-subpart-b');
+            const title = document.getElementById('matching-title');
+            const badge = document.getElementById('subpart-badge');
+
+            if (sub === 'A') {
+                tabA.className = "px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 bg-white text-slate-800 shadow-sm cursor-pointer";
+                tabB.className = "px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 text-slate-500 hover:text-slate-800 cursor-pointer";
+                badge.className = "px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider";
+                badge.textContent = "1A: DAYS";
+                title.textContent = "Sub-bagian 1A: Mencocokkan DAYS (7 Hari)";
+                renderFlipCards(daysDataset, matchedDaysIds);
+            } else {
+                tabB.className = "px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 bg-white text-slate-800 shadow-sm cursor-pointer";
+                tabA.className = "px-5 py-2.5 rounded-xl font-bold text-xs md:text-sm transition flex items-center gap-2 text-slate-500 hover:text-slate-800 cursor-pointer";
+                badge.className = "px-3 py-1 bg-purple-100 text-purple-800 font-bold text-xs rounded-full uppercase tracking-wider";
+                badge.textContent = "1B: SUBJECTS";
+                title.textContent = "Sub-bagian 1B: Mencocokkan SUBJECTS (9 Pelajaran)";
+                renderFlipCards(subjectsDataset, matchedSubjectsIds);
+            }
+        }
+
+        function renderFlipCards(dataset, matchedList) {
+            const topGrid = document.getElementById('top-cards-grid');
+            const bottomGrid = document.getElementById('bottom-cards-grid');
+
+            document.getElementById('top-card-count').textContent = `${dataset.length} Kartu`;
+            document.getElementById('bottom-card-count').textContent = `${dataset.length} Kartu`;
+
+            topGrid.innerHTML = '';
+            bottomGrid.innerHTML = '';
+
+            // Shuffle top cards (English)
+            const shuffledTop = [...dataset].sort(() => Math.random() - 0.5);
+            // Shuffle bottom cards (Indonesian)
+            const shuffledBottom = [...dataset].sort(() => Math.random() - 0.5);
+
+            shuffledTop.forEach(item => {
+                const isMatched = matchedList.includes(item.id);
+                const card = document.createElement('div');
+                card.id = `top-card-${item.id}`;
+                card.className = `flip-card perspective-1000 h-24 sm:h-28 ${isMatched ? 'flipped' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="flip-card-inner cursor-pointer" onclick="clickTopCard('${item.id}', this.parentElement)">
+                        <!-- Front (Cover) -->
+                        <div class="flip-card-front bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-2 border-indigo-400 p-2 shadow-sm hover:scale-[1.02] transition">
+                            <div class="text-center">
+                                <i class="fa-solid fa-question-circle text-xl text-amber-300 mb-1"></i>
+                                <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-80">Klik Buka</div>
+                            </div>
+                        </div>
+                        <!-- Back (Flipped Content) -->
+                        <div class="flip-card-back ${isMatched ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-900' : 'bg-white border-2 border-indigo-400 text-slate-800'} p-2 shadow-md">
+                            <div class="text-center w-full">
+                                <i class="fa-solid ${item.icon} ${item.color} text-xl mb-1"></i>
+                                <div class="font-extrabold text-xs sm:text-sm leading-tight">${item.en}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                topGrid.appendChild(card);
+            });
+
+            shuffledBottom.forEach(item => {
+                const isMatched = matchedList.includes(item.id);
+                const card = document.createElement('div');
+                card.id = `bottom-card-${item.id}`;
+                card.className = `flip-card perspective-1000 h-24 sm:h-28 ${isMatched ? 'flipped' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="flip-card-inner cursor-pointer" onclick="clickBottomCard('${item.id}', this.parentElement)">
+                        <!-- Front (Cover) -->
+                        <div class="flip-card-front bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-2 border-emerald-400 p-2 shadow-sm hover:scale-[1.02] transition">
+                            <div class="text-center">
+                                <i class="fa-solid fa-star text-xl text-amber-300 mb-1"></i>
+                                <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-80">Klik Buka</div>
+                            </div>
+                        </div>
+                        <!-- Back (Flipped Content) -->
+                        <div class="flip-card-back ${isMatched ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-900' : 'bg-white border-2 border-emerald-400 text-slate-800'} p-2 shadow-md">
+                            <div class="text-center w-full">
+                                <i class="fa-solid ${item.icon} ${item.color} text-xl mb-1"></i>
+                                <div class="font-extrabold text-xs sm:text-sm leading-tight">${item.idn}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                bottomGrid.appendChild(card);
+            });
+        }
+
+        function clickTopCard(id, cardEl) {
+            const matchedList = currentMatchingSubpart === 'A' ? matchedDaysIds : matchedSubjectsIds;
+            if (matchedList.includes(id)) return;
+
+            if (selectedTopCard && selectedTopCard.id !== id) {
+                selectedTopCard.el.classList.remove('flipped');
+            }
+
+            selectedTopCard = { id, el: cardEl };
+            cardEl.classList.add('flipped');
+            playSound('correct');
+
+            checkMatchingPair();
+        }
+
+        function clickBottomCard(id, cardEl) {
+            const matchedList = currentMatchingSubpart === 'A' ? matchedDaysIds : matchedSubjectsIds;
+            if (matchedList.includes(id)) return;
+
+            if (selectedBottomCard && selectedBottomCard.id !== id) {
+                selectedBottomCard.el.classList.remove('flipped');
+            }
+
+            selectedBottomCard = { id, el: cardEl };
+            cardEl.classList.add('flipped');
+            playSound('correct');
+
+            checkMatchingPair();
+        }
+
+        function checkMatchingPair() {
+            if (selectedTopCard && selectedBottomCard) {
+                const topId = selectedTopCard.id;
+                const bottomId = selectedBottomCard.id;
+                const topEl = selectedTopCard.el;
+                const bottomEl = selectedBottomCard.el;
+
+                if (topId === bottomId) {
+                    playSound('correct');
+                    if (currentMatchingSubpart === 'A') {
+                        matchedDaysIds.push(topId);
+                    } else {
+                        matchedSubjectsIds.push(topId);
+                    }
+
+                    setTimeout(() => {
+                        [topEl, bottomEl].forEach(el => {
+                            const backNode = el.querySelector('.flip-card-back');
+                            if (backNode) {
+                                backNode.className = "flip-card-back bg-emerald-100 border-2 border-emerald-500 text-emerald-900 p-2 shadow-md";
+                            }
+                        });
+                    }, 200);
+
+                    selectedTopCard = null;
+                    selectedBottomCard = null;
+
+                    updateMatchingScoreUI();
+                } else {
+                    playSound('wrong');
+                    topEl.classList.add('shake-card');
+                    bottomEl.classList.add('shake-card');
+
+                    const resetTop = selectedTopCard;
+                    const resetBottom = selectedBottomCard;
+
+                    selectedTopCard = null;
+                    selectedBottomCard = null;
+
+                    setTimeout(() => {
+                        if (resetTop && !isCardIdMatched(resetTop.id)) resetTop.el.classList.remove('flipped', 'shake-card');
+                        if (resetBottom && !isCardIdMatched(resetBottom.id)) resetBottom.el.classList.remove('flipped', 'shake-card');
+                    }, 800);
+                }
+            }
+        }
+
+        function isCardIdMatched(id) {
+            return currentMatchingSubpart === 'A' ? matchedDaysIds.includes(id) : matchedSubjectsIds.includes(id);
+        }
+
+        function updateMatchingScoreUI() {
+            const daysScore = matchedDaysIds.length * 2; // 14 pts
+            const subjectsScore = Math.round((matchedSubjectsIds.length / 9) * 26); // 26 pts
+
+            studentData.part1Score = daysScore + subjectsScore;
+            document.getElementById('match-part1-score').textContent = `${studentData.part1Score} / 40`;
+
+            const totalMatched = matchedDaysIds.length + matchedSubjectsIds.length;
+            const btnNext = document.getElementById('btn-next-to-quiz');
+            const statusText = document.getElementById('subpart-status-text');
+
+            if (totalMatched === 16) {
+                btnNext.disabled = false;
+                btnNext.className = "px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition bounce-hover flex items-center gap-2 cursor-pointer";
+                statusText.innerHTML = `<span class="text-emerald-600 font-extrabold"><i class="fa-solid fa-circle-check mr-1"></i> Luar biasa! Semua kartu terpasang! Klik Lanjut ke Bagian 2.</span>`;
+            } else {
+                btnNext.disabled = true;
+                btnNext.className = "px-6 py-3 bg-slate-200 text-slate-400 font-bold text-sm rounded-2xl transition cursor-not-allowed flex items-center gap-2";
+                statusText.textContent = `Terpasang: 1A (${matchedDaysIds.length}/7) | 1B (${matchedSubjectsIds.length}/9)`;
+            }
+        }
+
+        /* PART 2: QUIZ LOGIC */
+        function proceedToQuiz() {
+            document.getElementById('screen-matching').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            currentQuizIndex = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            
+            document.getElementById('quiz-question-number').textContent = `Soal ${q.num} / ${quizQuestions.length}`;
+            document.getElementById('q-num-badge').textContent = q.num;
+            document.getElementById('question-text').textContent = q.question;
+
+            const pct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            feedbackBox.classList.add('hidden');
+
+            const visualContainer = document.getElementById('question-visual-container');
+            visualContainer.innerHTML = '';
+            visualContainer.classList.add('hidden');
+
+            if (q.visual === 'kevin_schedule') {
+                visualContainer.classList.remove('hidden');
+                visualContainer.innerHTML = `
+                    <div class="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-4 shadow-sm">
+                        <div class="flex items-center gap-2 font-extrabold text-amber-900 text-sm mb-3 border-b border-amber-200 pb-2">
+                            <i class="fa-solid fa-calendar-days text-amber-600 text-lg"></i>
+                            <span>KEVIN'S SCHEDULE (JADWAL KEVIN)</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm font-bold">
+                            <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
+                                <span class="font-extrabold text-rose-600 block mb-1 uppercase tracking-wider text-[11px]">
+                                    <i class="fa-solid fa-sun mr-1"></i> Sunday:
+                                </span>
+                                <span class="text-slate-800">Math, Civics, Indonesian</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
+                                <span class="font-extrabold text-blue-600 block mb-1 uppercase tracking-wider text-[11px]">
+                                    <i class="fa-solid fa-calendar-day mr-1"></i> Monday:
+                                </span>
+                                <span class="text-slate-800">Religion, English, P.E.</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.visual === 'calendar') {
+                visualContainer.classList.remove('hidden');
+                visualContainer.innerHTML = `
+                    <div class="inline-flex items-center gap-3 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl shadow-2xs">
+                        <i class="fa-solid fa-calendar-day text-indigo-500 text-2xl"></i>
+                        <span class="text-sm font-extrabold text-slate-700">Acuan Hari: <span class="text-indigo-600">${q.day}</span></span>
+                    </div>
+                `;
+            } else if (q.visual === 'icon') {
+                visualContainer.classList.remove('hidden');
+                visualContainer.innerHTML = `
+                    <div class="w-16 h-16 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-3xl shadow-2xs">
+                        <i class="fa-solid ${q.iconClass}"></i>
+                    </div>
+                `;
+            } else if (q.visual === 'calendar_week') {
+                visualContainer.classList.remove('hidden');
+                visualContainer.innerHTML = `
+                    <div class="flex flex-wrap gap-1.5 justify-center bg-sky-50 border border-sky-200 p-3 rounded-2xl">
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-rose-500 shadow-2xs">Sunday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Monday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Tuesday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Wednesday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Thursday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Friday</span>
+                        <span class="px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-slate-700 shadow-2xs">Saturday</span>
+                    </div>
+                `;
+            }
+
+            // Options Grid
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionLabels = ['A', 'B', 'C', 'D'];
+            const currentAnswer = userQuizAnswers[currentQuizIndex];
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = currentAnswer === idx;
+                const btn = document.createElement('button');
+                btn.className = `w-full p-4 rounded-2xl border-2 text-left font-bold transition flex items-center justify-between cursor-pointer ${
+                    isSelected ? 'border-indigo-600 bg-indigo-50 text-indigo-900 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                }`;
+                btn.onclick = () => selectQuizAnswer(idx);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-xl ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'} font-extrabold text-xs flex items-center justify-center">${optionLabels[idx]}</span>
+                        <span class="text-sm md:text-base">${opt}</span>
+                    </div>
+                    <i class="${isSelected ? 'fa-solid fa-circle-check text-indigo-600' : 'fa-regular fa-circle text-slate-300'} text-lg"></i>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            if (currentAnswer !== null) {
+                showQuizFeedback(currentAnswer === q.answer, q.explanation);
+            }
+
+            document.getElementById('btn-prev-question').style.visibility = currentQuizIndex === 0 ? 'hidden' : 'visible';
+            
+            const btnNext = document.getElementById('btn-next-question');
+            if (currentQuizIndex === quizQuestions.length - 1) {
+                btnNext.innerHTML = `<span>Selesai & Lihat Hasil</span> <i class="fa-solid fa-flag-checkered"></i>`;
+                btnNext.className = "px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer";
+            } else {
+                btnNext.innerHTML = `<span>Berikutnya</span> <i class="fa-solid fa-chevron-right"></i>`;
+                btnNext.className = "px-6 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer";
+            }
+        }
+
+        function selectQuizAnswer(idx) {
+            userQuizAnswers[currentQuizIndex] = idx;
+            const q = quizQuestions[currentQuizIndex];
+            const isCorrect = idx === q.answer;
+
+            if (isCorrect) {
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+
+            renderQuizQuestion();
+            showQuizFeedback(isCorrect, q.explanation);
+        }
+
+        function showQuizFeedback(isCorrect, explanation) {
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+
+            feedbackBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-bold border border-emerald-300 bg-emerald-50 text-emerald-900 flex items-center gap-3";
+                feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 text-xl";
+                feedbackText.innerHTML = `<span>Hebat! Jawabanmu Tepat.</span> <p class="text-xs font-normal text-emerald-700 mt-0.5">${explanation}</p>`;
+            } else {
+                feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-bold border border-rose-300 bg-rose-50 text-rose-900 flex items-center gap-3";
+                feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-600 text-xl";
+                feedbackText.innerHTML = `<span>Kurang Tepat.</span> <p class="text-xs font-normal text-rose-700 mt-0.5">${explanation}</p>`;
+            }
+        }
+
+        function navigateQuiz(dir) {
+            if (dir === 1) {
+                if (userQuizAnswers[currentQuizIndex] === null) {
+                    showCustomToast("Pilih salah satu jawaban terlebih dahulu!");
+                    return;
+                }
+                if (currentQuizIndex < quizQuestions.length - 1) {
+                    currentQuizIndex++;
+                    renderQuizQuestion();
+                } else {
+                    finishQuizAndCalculate();
+                }
+            } else if (dir === -1) {
+                if (currentQuizIndex > 0) {
+                    currentQuizIndex--;
+                    renderQuizQuestion();
+                }
+            }
+        }
+
+        /* FINAL CALCULATION AND COMPLIMENT RENDERING */
+        function finishQuizAndCalculate() {
+            let correctCount = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (userQuizAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            studentData.part2Score = correctCount * 4; // 60 max (15 questions * 4 pts)
+            studentData.totalScore = studentData.part1Score + studentData.part2Score; // 100 max
+
+            saveStudentRecord(studentData);
+
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            document.getElementById('result-student-info').textContent = `Siswa: ${studentData.name} | Kelas: ${studentData.class}`;
+            document.getElementById('final-score-display').textContent = studentData.totalScore;
+            document.getElementById('score-breakdown-p1').textContent = `${studentData.part1Score} / 40`;
+            document.getElementById('score-breakdown-p2').textContent = `${studentData.part2Score} / 60`;
+
+            // Prepare Compliment Text (STRICT PHRASING PER INSTRUCTIONS)
+            let complimentEn = "";
+            let complimentIdn = "";
+            let complimentBoxClass = "";
+
+            if (studentData.totalScore >= 81) {
+                complimentEn = `<i class="fa-solid fa-award text-amber-500 text-2xl mr-2"></i> "Excellent! You're doing great!"`;
+                complimentIdn = "Arti: Sangat bagus! Kamu luar biasa!";
+                complimentBoxClass = "bg-amber-50 border-amber-300 text-amber-950";
+                playSound('fanfare');
+                triggerConfetti();
+            } else if (studentData.totalScore >= 61) {
+                complimentEn = `<i class="fa-solid fa-star text-blue-500 text-2xl mr-2"></i> "Wonderful! Let's try again!"`;
+                complimentIdn = "Arti: Luar biasa! Mari coba lagi!";
+                complimentBoxClass = "bg-blue-50 border-blue-300 text-blue-950";
+                playSound('correct');
+                triggerConfetti();
+            } else {
+                complimentEn = `<i class="fa-solid fa-thumbs-up text-purple-500 text-2xl mr-2"></i> "Good job! Please try again!"`;
+                complimentIdn = "Arti: Kerja bagus! Coba lagi ya!";
+                complimentBoxClass = "bg-purple-50 border-purple-300 text-purple-950";
+                playSound('correct');
+            }
+
+            const compBox = document.getElementById('compliment-box');
+            compBox.className = `p-5 rounded-2xl mb-6 border-2 text-left space-y-1 ${complimentBoxClass}`;
+            document.getElementById('compliment-english').innerHTML = complimentEn;
+            document.getElementById('compliment-indonesian').textContent = complimentIdn;
+
+            // Prepare WhatsApp Confirmation Link to Teacher 085357959694
+            const teacherWA = "085357959694";
+            const waClean = "62" + teacherWA.substring(1);
+            
+            const waText = 
+`*KONFIRMASI HASIL ASESMEN BAHASA INGGRIS*
+---------------------------------------
+*Nama Siswa:* ${studentData.name}
+*Kelas:* ${studentData.class}
+*Tanggal:* ${studentData.date}
+
+*DETAIL NILAI:*
+- Bagian 1 (Matching Cards): ${studentData.part1Score} / 40
+- Bagian 2 (Pilihan Ganda): ${studentData.part2Score} / 60
+*TOTAL SKOR:* ${studentData.totalScore} / 100
+
+*CATATAN PUJIAN:*
+${studentData.totalScore >= 81 ? "Excellent! You're doing great!" : studentData.totalScore >= 61 ? "Wonderful! Let's try again!" : "Good job! Please try again!"}
+
+Terima kasih Ibu/Bapak Guru!`;
+
+            const waUrl = `https://wa.me/${waClean}?text=${encodeURIComponent(waText)}`;
+            document.getElementById('btn-wa-confirm').href = waUrl;
+        }
+
+        /* TEACHER PIN & PORTAL MANAGEMENT */
+        function promptTeacherPin() {
+            document.getElementById('input-teacher-pin').value = '';
+            document.getElementById('pin-error-text').classList.add('hidden');
+            document.getElementById('modal-pin').classList.remove('hidden');
+        }
+
+        function closePinModal() {
+            document.getElementById('modal-pin').classList.add('hidden');
+        }
+
+        function verifyTeacherPin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('input-teacher-pin').value.trim();
+            if (pin === '1234' || pin === 'guru123') {
+                closePinModal();
+                openTeacherModal();
+            } else {
+                document.getElementById('pin-error-text').classList.remove('hidden');
+            }
+        }
+
+        function saveStudentRecord(data) {
+            let records = JSON.parse(localStorage.getItem('english_days_subjects_records') || '[]');
+            records.push({ ...data });
+            localStorage.setItem('english_days_subjects_records', JSON.stringify(records));
+        }
+
+        function openTeacherModal() {
+            renderTeacherRecords();
+            document.getElementById('modal-teacher').classList.remove('hidden');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('modal-teacher').classList.add('hidden');
+        }
+
+        function renderTeacherRecords() {
+            const records = JSON.parse(localStorage.getItem('english_days_subjects_records') || '[]');
+            const filterClass = document.getElementById('teacher-filter-class').value;
+            const searchText = document.getElementById('teacher-search-input').value.toLowerCase().trim();
+
+            let filtered = filterClass === 'ALL' ? records : records.filter(r => r.class === filterClass);
+
+            if (searchText) {
+                filtered = filtered.filter(r => r.name.toLowerCase().includes(searchText));
+            }
+
+            document.getElementById('stat-total-students').textContent = records.length;
+
+            const rec4A = records.filter(r => r.class === '4A');
+            const avg4A = rec4A.length ? Math.round(rec4A.reduce((s, r) => s + r.totalScore, 0) / rec4A.length) : 0;
+            document.getElementById('stat-avg-4a').textContent = avg4A;
+
+            const rec4B = records.filter(r => r.class === '4B');
+            const avg4B = rec4B.length ? Math.round(rec4B.reduce((s, r) => s + r.totalScore, 0) / rec4B.length) : 0;
+            document.getElementById('stat-avg-4b').textContent = avg4B;
+
+            const avgTotal = records.length ? Math.round(records.reduce((s, r) => s + r.totalScore, 0) / records.length) : 0;
+            document.getElementById('stat-avg-total').textContent = avgTotal;
+
+            const tbody = document.getElementById('teacher-table-body');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="p-6 text-center text-slate-400 italic">Belum ada data siswa tersimpan.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach((r, idx) => {
+                let compBadge = "";
+                if (r.totalScore >= 81) {
+                    compBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">Excellent!</span>`;
+                } else if (r.totalScore >= 61) {
+                    compBadge = `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[10px]">Wonderful!</span>`;
+                } else {
+                    compBadge = `<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[10px]">Good job!</span>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400">${idx + 1}</td>
+                    <td class="p-3 font-extrabold text-slate-800">${r.name}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-md font-extrabold text-[10px] ${r.class === '4A' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}">${r.class}</span></td>
+                    <td class="p-3 text-center text-slate-600">${r.part1Score}</td>
+                    <td class="p-3 text-center text-slate-600">${r.part2Score}</td>
+                    <td class="p-3 text-center"><span class="font-extrabold px-2.5 py-1 rounded-lg ${r.totalScore >= 81 ? 'bg-amber-100 text-amber-800' : r.totalScore >= 61 ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-700'}">${r.totalScore}</span></td>
+                    <td class="p-3">${compBadge}</td>
+                    <td class="p-3 text-slate-500 text-[11px]">${r.date || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportToCSV() {
+            const records = JSON.parse(localStorage.getItem('english_days_subjects_records') || '[]');
+            if (records.length === 0) {
+                showCustomToast("Tidak ada data untuk diekspor!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,No,Nama Siswa,Kelas,Nilai Part 1,Nilai Part 2,Total Skor,Compliment,Waktu Pengerjaan\n";
+            records.forEach((r, idx) => {
+                const comp = r.totalScore >= 81 ? "Excellent! You're doing great!" : r.totalScore >= 61 ? "Wonderful! Let's try again!" : "Good job! Please try again!";
+                csvContent += `${idx + 1},"${r.name}",${r.class},${r.part1Score},${r.part2Score},${r.totalScore},"${comp}","${r.date}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Asesmen_BahasaInggris_Kelas4SD_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function clearAllDataPrompt() {
+            if (confirm("Apakah Anda yakin ingin menghapus seluruh riwayat data asesmen siswa?")) {
+                localStorage.removeItem('english_days_subjects_records');
+                renderTeacherRecords();
+                showCustomToast("Seluruh data telah dibersihkan!");
+            }
+        }
+
+        function showCustomToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl text-xs md:text-sm font-bold z-50 flex items-center gap-2 animate-bounce";
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-amber-400"></i> <span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function restartGame() {
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-register').classList.remove('hidden');
+            document.getElementById('input-student-name').value = '';
+            userQuizAnswers = new Array(quizQuestions.length).fill(null);
+        }
+
+        /* CONFETTI ANIMATION ENGINE */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const numberOfPieces = 100;
+            const colors = ['#FBBF24', '#FB923C', '#F472B6', '#38BDF8', '#34D399', '#A78BFA'];
+
+            for (let i = 0; i < numberOfPieces; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 5 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            function updateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.speed;
+                    p.angle += 3;
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.angle * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+                animationFrame = requestAnimationFrame(updateConfetti);
+            }
+
+            updateConfetti();
+
+            setTimeout(() => {
+                cancelAnimationFrame(animationFrame);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
